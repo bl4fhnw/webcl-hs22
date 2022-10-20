@@ -1,6 +1,6 @@
 import {VALUE, VALID, EDITABLE, LABEL} from "../presentationModel/presentationModel.js";
 
-export { personListItemProjector, personFormProjector }
+export { personListItemProjector, personTableProjector, personFormProjector }
 
 const bindTextInput = (textAttr, inputElement) => {
     inputElement.oninput = _ => textAttr.setConvertedValue(inputElement.value);
@@ -89,4 +89,69 @@ const personFormProjector = (detailController, rootElement, person) => {
         .onChange(label => divElement.querySelector('[for=lastname]').textContent = label);
 
     rootElement.firstChild.replaceWith(divElement);
+};
+
+
+const personTableProjector = (masterController, selectionController, rootElement, person) => {
+    let table           = document.getElementById("table");
+    let tHead, tBody;
+
+    if(!table){
+        table   = document.createElement("table");
+        tHead   = document.createElement("thead");
+        tBody   = document.createElement("tbody");
+
+        tHead.innerHTML = "<tr><th>Delete</th><th>First Name</th><th>Last Name</th></tr>"
+
+        table.setAttribute("id","table")
+        table.appendChild(tHead);
+        table.appendChild(tBody);
+        rootElement.appendChild(table);
+    }else{
+        tBody = table.getElementsByTagName('tbody')[0];
+    }
+
+    const deleteButton      = document.createElement("Button");
+    deleteButton.innerHTML  = "&times;";
+    deleteButton.onclick    = _ => masterController.removePerson(person);
+    deleteButton.setAttribute("class","delete");
+
+    const firstnameInputElement = personTextProjector(person.firstname);
+    const lastnameInputElement  = personTextProjector(person.lastname);
+
+    firstnameInputElement.onfocus   = _ => selectionController.setSelectedPerson(person);
+    lastnameInputElement.onfocus    = _ => selectionController.setSelectedPerson(person);
+
+    const personRow         = document.createElement("tr");
+    const deleteField       = document.createElement("td");
+    const firstNameField    = document.createElement("td");
+    const lastNameField     = document.createElement("td");
+
+    deleteField.appendChild(deleteButton);
+    firstNameField.appendChild(firstnameInputElement);
+    lastNameField.appendChild(lastnameInputElement);
+
+    personRow.appendChild(deleteField);
+    personRow.appendChild(firstNameField);
+    personRow.appendChild(lastNameField);
+
+    tBody.appendChild(personRow)
+
+    selectionController.onPersonSelected(
+        selected => selected === person
+            ? personRow.classList.add("selected")
+            : personRow.classList.remove("selected")
+    );
+
+    masterController.onPersonRemove( (removedPerson, removeMe) => {
+        if (removedPerson !== person) return;
+        selectionController.clearSelection();
+        removeMe();
+        tBody.removeChild(personRow);
+
+        if(tBody.children.length < 1)
+            rootElement.removeChild(table);
+    } );
+
+    selectionController.setSelectedPerson(person);
 };

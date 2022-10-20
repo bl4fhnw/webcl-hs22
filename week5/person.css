@@ -50,5 +50,18 @@ input.invalid {
     color: red;
 }
 .selected {
-    box-shadow: 0 0 0.2em gold;
+    box-shadow: 0 0 1em gold;
 }
+
+table {
+    width: 100%;
+    border: 1px solid;
+}
+
+th, td {
+    border: 1px solid;
+    text-align: center;
+}
+
+
+
