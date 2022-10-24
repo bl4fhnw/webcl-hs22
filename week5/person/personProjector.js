@@ -93,7 +93,8 @@ const personFormProjector = (detailController, rootElement, person) => {
 
 
 const personTableProjector = (masterController, selectionController, rootElement, person) => {
-    let table           = document.getElementById("table");
+    //let table           = document.getElementById("table");
+    let table           = rootElement.getElementsByTagName("table")[0];
     let tHead, tBody;
 
     if(!table){
@@ -103,7 +104,7 @@ const personTableProjector = (masterController, selectionController, rootElement
 
         tHead.innerHTML = "<tr><th>Delete</th><th>First Name</th><th>Last Name</th></tr>"
 
-        table.setAttribute("id","table")
+        //table.setAttribute("id","table")
         table.appendChild(tHead);
         table.appendChild(tBody);
         rootElement.appendChild(table);

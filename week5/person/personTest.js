@@ -37,7 +37,7 @@ function setup() {
         updateInput
     };
 }
-
+ /*
 personSuite.add('crud', assert => {
     const {masterContainer, masterController} = setup();
     const elementsPerRow = 3;
@@ -62,6 +62,44 @@ personSuite.add('crud', assert => {
     //then
     assert.is(masterContainer.children.length, 1 * elementsPerRow);
 });
+*/
+
+personSuite.add('crud', assert => {
+    const {masterContainer, masterController} = setup();
+
+    //then
+    assert.is(masterContainer.children.length, 0);
+
+    //when
+    masterController.addPerson();
+    const table = masterContainer.getElementsByTagName('table')[0];
+    const tBody = table.getElementsByTagName('tbody')[0];
+    //then
+    assert.is(masterContainer.children.length, 1);
+    assert.is(table.children.length, 2);
+    assert.is(tBody.children.length, 1);
+
+    //when
+    masterController.addPerson();
+    //then
+    assert.is(tBody.children.length, 2);
+
+    //given
+    let firstDeleteButton = masterContainer.querySelectorAll('button')[0];
+    //when
+    firstDeleteButton.click();
+    //then
+    assert.is(tBody.children.length, 1);
+
+    //given
+    firstDeleteButton = masterContainer.querySelectorAll('button')[0];
+    //when
+    firstDeleteButton.click();
+    //then
+    assert.is(masterContainer.children.length, 0);
+    assert.is(tBody.children.length, 0);
+});
+
 
 personSuite.add('update selection in detailContainer', assert => {
     const {masterContainer, masterController, detailFirstnameInput, detailLastnameInput} = setup();
